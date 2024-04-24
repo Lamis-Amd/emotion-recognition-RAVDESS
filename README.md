@@ -11,12 +11,18 @@ Preprocess the data.
 Remove the silence parts from the beginning and the end of video clips. (Tips: ffmpeg filters)
 Audio representation:
 Extract the audio from the video. (Tips: ffmpeg)
+
 Extract 24 Mel Frequency Cepstral Coefficients from the audio. (Tips: use librosa.)
+
 Calculate the mean number of (spectral) frames in the dataset.
+
 Standardize the MFCCs sample-wise. (Tips: zero mean and unit variance)
+
 Use pre-padding (Note: with 0, which is also the mean after standardization) to unify the length of the samples.
+
 Audio representation per sample is a tensor with shape (N,M,1) where N is the number of coefficients (e.g. 24) and M is the number of audio frames.
-Visual representation:
+
+### Visual representation:
 Extract the faces from the images. (Tips: You can use the cv2.CascadeClassifier, or the DLIB package to determine facial keypoints, or MTCNN to predict bounding boxes.)
 Resize the face images to 64x64. (Tips: You can use lower/higher resolution as well.)
 Subsample the frames to reduce complexity (6 frames/video is enough).
@@ -31,11 +37,7 @@ Create a generator, which iterates over the audio and visual representations. (N
 
 Print the size of each set, plot 3 samples: frames, MFCCs and their corresponding emotion class labels. (Tips: use librosa for plotting MFCCs)
 
-Alternative considerations. They may require additional steps:
 
-You can use Mean (axis=1) MFCCs vectors to further reduce complexity. Input of the corresponding subnetwork should be modified to accept inputs with shape (N, 1).
-You can use log-melspectrograms as well. Note, that raw spectrograms are displaying power. Mel scale should be applied on the frequency axis, and log on the third dimension (decibels are expected). You can use librosa for that (librosa.feature.melspectrogram, librosa.power_to_db)
-A better evaluation procedure here is the LOO (Leave-One-Out) cross-validation, however it can be costy.
 
 
 
@@ -51,7 +53,7 @@ ResNet / Inception architecture (Residual blocks, Inception cells)
 You can try other configurations, better submodels (like 3D convolution nets). Have a reason for your choice!
 Apply Max pooling over the time dimension to reduce complexity (or use GRU or LSTM for better temporal modelling)
 
-##Model fusion:
+### Model fusion:
 Concatenate the final hidden representations of the audio and visual subnetwork.
 Apply fully connected layers on it (256 units, ReLU), then an another dense layer (7 units, softmax).
 You can feed multiple inputs to the Model using a list: model = tf.keras.models.Model(inputs=[input_audio, input_video], outputs=output)
